@@ -83,29 +83,52 @@ function processFrame() {
 
 // Gesture recognition logic
 function isPalmGesture(hand) {
-  // Implement your logic to determine if it's a palm gesture
-  // For example, you can check the distances between landmarks
-  // and angles between joints
-  return false; // Replace with your actual logic
+  // Check if all fingers are spread out and palm is facing forward
+  const thumbTip = hand.landmarks[4];
+  const indexTip = hand.landmarks[8];
+  const middleTip = hand.landmarks[12];
+  const ringTip = hand.landmarks[16];
+  const pinkyTip = hand.landmarks[20];
+
+  const thumbSpread = Math.abs(thumbTip.x - indexTip.x);
+  const indexSpread = Math.abs(indexTip.x - middleTip.x);
+  const middleSpread = Math.abs(middleTip.x - ringTip.x);
+  const ringSpread = Math.abs(ringTip.x - pinkyTip.x);
+
+  const thumbCurl = thumbTip.y - indexTip.y;
+  const indexCurl = indexTip.y - middleTip.y;
+  const middleCurl = middleTip.y - ringTip.y;
+  const ringCurl = ringTip.y - pinkyTip.y;
+
+  return thumbSpread > threshold && indexSpread > threshold &&
+         middleSpread > threshold && ringSpread > threshold &&
+         thumbCurl < 0 && indexCurl < 0 && middleCurl < 0 && ringCurl < 0;
 }
 
 // Mouse movement and click simulation
 function moveMouse(x, y) {
-  // Implement your own mouse movement logic here
-  // For example, you can use the robotjs library to control the mouse:
-  // robot.moveMouse(x, y);
+  // Simulate mouse movement using the robotjs library
+  robot.moveMouse(x, y);
 }
 
 function click() {
-  // Implement your own click logic here
-  // For example, you can use the robotjs library to simulate a click:
-  // robot.click();
+  // Simulate a mouse click using the robotjs library
+  robot.click();
 }
 
-// Hand drawing (optional)
+// Hand drawing
 function drawHand(hand) {
-  // Implement your own hand drawing logic here
-  // You can use the canvas context to draw lines and points
+  // Draw the hand landmarks on the canvas
+  ctx.strokeStyle = "red";
+  ctx.lineWidth = 2;
+  for (let i = 0; i < hand.landmarks.length; i++) {
+    const landmark = hand.landmarks[i];
+    const x = landmark.x * canvas.width;
+    const y = landmark.y * canvas.height;
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
 }
 
 // Initialization
